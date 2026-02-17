@@ -1,0 +1,13 @@
+{
+  "name": "ai-agent-service",
+  "version": "2.0",
+  "description": "Serviço de Agentes de IA para vendas",
+  "main": "ai_agent_service_v2.py",
+  "scripts": {
+    "start": "python3 ai_agent_service_v2.py",
+    "install": "pip install -r requirements.txt"
+  },
+  "keywords": ["ai", "agent", "automation", "whatsapp"],
+  "author": "",
+  "license": "MIT"
+}
