@@ -1,0 +1,17 @@
+{
+  "name": "Assistente Digital",
+  "short_name": "Assistente",
+  "description": "Sua secretária digital pessoal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#efeae2",
+  "theme_color": "#008069",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

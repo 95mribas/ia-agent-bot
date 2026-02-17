@@ -3,168 +3,904 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Agent - Automação Inteligente</title>
+    <meta name="theme-color" content="#008069">
+    <meta name="description" content="Assistente Digital Pessoal">
+    <title>Assistente - Sua Secretária Digital</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    
     <style>
+        :root {
+            --primary: #008069;
+            --primary-dark: #006f5f;
+            --bg: #efeae2;
+            --chat-bg: #efeae2;
+            --white: #fff;
+            --text: #000;
+            --text-secondary: #667781;
+            --sent: #d9fdd3;
+            --received: #fff;
+            --audio-bg: #f0f0f0;
+            --online: #25d366;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0a0a1a; color: #fff; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* App Container */
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg);
+        }
         
         /* Header */
-        header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, #1a1a2e, #16213e); }
-        .logo { font-size: 28px; font-weight: bold; background: linear-gradient(90deg, #00ff88, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
         
-        /* Hero */
-        .hero { text-align: center; padding: 100px 20px; background: radial-gradient(ellipse at top, #1a1a3e, #0a0a1a); }
-        .hero h1 { font-size: 56px; margin-bottom: 20px; }
-        .hero h1 span { background: linear-gradient(90deg, #00ff88, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 20px; color: #888; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
         
-        .btn { padding: 18px 50px; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .btn-primary { background: linear-gradient(90deg, #00ff88, #00d4ff); color: #000; }
-        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,255,136,0.4); }
-        .btn-secondary { background: transparent; border: 2px solid #00ff88; color: #00ff88; margin-left: 15px; }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+        }
         
-        /* Features */
-        .features { padding: 80px 40px; background: #0a0a1a; }
-        .features h2 { text-align: center; font-size: 40px; margin-bottom: 50px; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .feature { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; text-align: center; transition: 0.3s; }
-        .feature:hover { transform: translateY(-10px); background: rgba(0,255,136,0.1); }
-        .feature-icon { font-size: 50px; margin-bottom: 20px; }
-        .feature h3 { font-size: 22px; margin-bottom: 15px; color: #00ff88; }
-        .feature p { color: #888; }
+        .avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--online);
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
         
-        /* Pricing */
-        .pricing { padding: 80px 40px; background: linear-gradient(180deg, #0a0a1a, #1a1a3e); }
-        .pricing h2 { text-align: center; font-size: 40px; margin-bottom: 50px; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
-        .plan { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; text-align: center; transition: 0.3s; border: 2px solid transparent; }
-        .plan:hover { border-color: #00ff88; transform: scale(1.02); }
-        .plan.popular { border-color: #00ff88; position: relative; }
-        .plan.popular::before { content: 'MAIS VENDIDO'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00ff88; color: #000; padding: 5px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .plan-price { font-size: 48px; font-weight: bold; color: #00ff88; margin: 20px 0; }
-        .plan-price span { font-size: 18px; color: #888; }
-        .plan-features { list-style: none; margin: 20px 0; text-align: left; }
-        .plan-features li { padding: 10px 0; color: #ccc; }
-        .plan-features li::before { content: '✓ '; color: #00ff88; }
+        .header-info {
+            flex: 1;
+        }
         
-        /* CTA */
-        .cta { padding: 100px 20px; text-align: center; background: radial-gradient(ellipse at bottom, #1a1a3e, #0a0a1a); }
-        .cta h2 { font-size: 40px; margin-bottom: 20px; }
-        .cta p { color: #888; margin-bottom: 40px; }
+        .header-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
         
-        /* Footer */
-        footer { padding: 40px; text-align: center; color: #666; background: #050510; }
+        .header-status {
+            font-size: 13px;
+            opacity: 0.9;
+        }
         
-        /* WhatsApp */
-        .whatsapp { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 5px 20px rgba(37,211,102,0.4); }
+        .header-actions {
+            display: flex;
+            gap: 20px;
+        }
         
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 32px; }
-            .btn { width: 100%; margin: 10px 0; }
+        .header-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        /* Chat Area */
+        #chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 7px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            background: var(--sent);
+            border-top-right-radius: 0;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+            background: var(--received);
+            border-top-left-radius: 0;
+        }
+        
+        .message-audio {
+            background: var(--audio-bg) !important;
+            min-width: 200px;
+        }
+        
+        .audio-player {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .audio-wave {
+            flex: 1;
+            height: 30px;
+            background: linear-gradient(90deg, var(--primary) 20%, transparent 20%, transparent 40%, var(--primary) 40%, var(--primary) 60%, transparent 60%, transparent 80%, var(--primary) 80%);
+            background-size: 50px 30px;
+            animation: wave 1s linear infinite;
+        }
+        
+        @keyframes wave {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 0; }
+        }
+        
+        .audio-duration {
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-align: right;
+            margin-top: 4px;
+        }
+        
+        /* Input Area */
+        .input-area {
+            background: var(--white);
+            padding: 8px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        
+        .input-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 8px 12px;
+        }
+        
+        #messageInput {
+            flex: 1;
+            border: none;
+            font-size: 16px;
+            background: transparent;
+            resize: none;
+            max-height: 100px;
+            outline: none;
+        }
+        
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Recording */
+        .recording {
+            background: #ff4444 !important;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Typing */
+        .typing-indicator {
+            background: var(--received);
+            padding: 10px 15px;
+            border-radius: 7px;
+            align-self: flex-start;
+            display: none;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Sidebar */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: var(--white);
+            z-index: 1000;
+            transition: left 0.3s;
+            overflow-y: auto;
+        }
+        
+        #sidebar.open {
+            left: 0;
+        }
+        
+        .sidebar-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+        }
+        
+        .sidebar-menu {
+            padding: 10px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .menu-item:hover {
+            background: #f5f5f5;
+        }
+        
+        .menu-icon {
+            font-size: 20px;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .menu-text {
+            flex: 1;
+        }
+        
+        .menu-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .menu-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        /* Overlay */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        #overlay.show {
+            display: block;
+        }
+        
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1001;
+            display: none;
+        }
+        
+        .modal.show {
+            display: block;
+        }
+        
+        .modal h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .modal input, .modal textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .modal-btn.cancel {
+            background: #f0f0f0;
+        }
+        
+        .modal-btn.confirm {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Tasks */
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .task-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .task-check.checked {
+            background: var(--primary);
+        }
+        
+        .task-text {
+            flex: 1;
+        }
+        
+        .task-text.done {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+        
+        /* Notes */
+        .note-card {
+            background: #fff9c4;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ffd54f;
+        }
+        
+        .note-date {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 50;
+        }
+        
+        /* Welcome */
+        #welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        #welcome h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        #welcome p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        #welcome button {
+            padding: 15px 40px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo">🤖 AI Agent</div>
-        <a href="#contato" class="btn btn-primary" style="padding: 10px 25px; font-size: 14px;">Falar no WhatsApp</a>
-    </header>
+    <div id="app">
+        <!-- Welcome Screen -->
+        <div id="welcome">
+            <div style="font-size: 60px; margin-bottom: 20px;">🤖</div>
+            <h1>Assistente Digital</h1>
+            <p>Sua secretary virtual pessoal. Gerencia tarefas, anotações, compromissos e muito mais!</p>
+            <button onclick="startChat()">Começar</button>
+        </div>
 
-    <section class="hero">
-        <h1>Automatize Tudo com<br><span>Inteligência Artificial</span></h1>
-        <p>Agentes de IA que trabalham 24/7 para sua empresa. Atendem clientes, vendem, analisam dados e muito mais.</p>
-        <button class="btn btn-primary" onclick="window.location.href='#pricing'">Começar Agora</button>
-        <button class="btn btn-secondary" onclick="window.location.href='#features'">Ver Features</button>
-    </section>
+        <!-- Main Chat -->
+        <div id="main" style="display: none; height: 100%; flex-direction: column;">
+            <header>
+                <button class="back-btn" onclick="toggleSidebar()">☰</button>
+                <div class="avatar">A</div>
+                <div class="header-info">
+                    <div class="header-name">Assistente</div>
+                    <div class="header-status" id="status">Online</div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" onclick="makeCall()">📞</button>
+                </div>
+            </header>
 
-    <section class="features" id="features">
-        <h2>🤖 O que os Agentes fazem</h2>
-        <div class="features-grid">
-            <div class="feature">
-                <div class="feature-icon">🎧</div>
-                <h3>Atendimento 24/7</h3>
-                <p>Agente que responde instantaneamente, qualquer hora do dia ou da noite</p>
+            <div id="chat">
+                <!-- Messages will appear here -->
             </div>
-            <div class="feature">
-                <div class="feature-icon">💰</div>
-                <h3>Vendas</h3>
-                <p>Auxilia clientes, mostra produtos e fecha vendas automaticamente</p>
+            
+            <!-- Typing -->
+            <div class="typing-indicator" id="typing">
+                <div class="typing-dots">
+                    <span></span><span></span><span></span>
+                </div>
             </div>
-            <div class="feature">
-                <div class="feature-icon">📊</div>
-                <h3>Análise de Dados</h3>
-                <p>Analisa informações e gera relatórios insights Actionáveis</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">🔧</div>
-                <h3>Suporte Técnico</h3>
-                <p>Resolve problemas técnicos sem precisar de humano</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">📅</div>
-                <h3>Agendamento</h3>
-                <p>Marca consultas, reuniões e compromissos automaticamente</p>
-            </div>
-            <div class="feature">
-                <div class="feature-icon">💬</div>
-                <h3>Multi-channel</h3>
-                <p>WhatsApp, Telegram, Instagram, Website - tudo integrado</p>
+
+            <div class="input-area">
+                <div class="input-actions">
+                    <button class="input-btn" onclick="openTasks()">📝</button>
+                    <button class="input-btn" onclick="openNotes()">📒</button>
+                </div>
+                <div class="input-wrapper">
+                    <textarea id="messageInput" placeholder="Digite uma mensagem..." rows="1"></textarea>
+                </div>
+                <button class="input-btn" id="recordBtn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording()" ontouchend="stopRecording()">🎤</button>
+                <button class="send-btn" onclick="sendMessage()">➤</button>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section class="pricing" id="pricing">
-        <h2>💵 Planos para Todos os Bolos</h2>
-        <div class="pricing-grid">
-            <div class="plan">
-                <h3>🚗 Básico</h3>
-                <div class="plan-price">R$ 97<span>/mês</span></div>
-                <ul class="plan-features">
-                    <li>1 Agente de IA</li>
-                    <li>100 mensagens/dia</li>
-                    <li>Suporte por email</li>
-                    <li>Atendimento básico</li>
-                </ul>
-                <button class="btn btn-secondary" style="width: 100%;">Quero este</button>
+    <!-- Sidebar -->
+    <div id="overlay" onclick="toggleSidebar()"></div>
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h2>🤖 Assistente</h2>
+            <p>Sua secretary digital</p>
+        </div>
+        <div class="sidebar-menu">
+            <div class="menu-item" onclick="openTasks()">
+                <div class="menu-icon">✅</div>
+                <div class="menu-text">
+                    <div class="menu-title">Tarefas</div>
+                    <div class="menu-desc">Gerencie suas tarefas</div>
+                </div>
             </div>
-            <div class="plan popular">
-                <h3>🚀 Pro</h3>
-                <div class="plan-price">R$ 297<span>/mês</span></div>
-                <ul class="plan-features">
-                    <li>3 Agentes de IA</li>
-                    <li>1.000 mensagens/dia</li>
-                    <li>Suporte priority</li>
-                    <li>API de integração</li>
-                    <li>Todas as funcionalidades</li>
-                </ul>
-                <button class="btn btn-primary" style="width: 100%;">Quero este</button>
+            <div class="menu-item" onclick="openNotes()">
+                <div class="menu-icon">📒</div>
+                <div class="menu-text">
+                    <div class="menu-title">Anotações</div>
+                    <div class="menu-desc">Notas e lembretes</div>
+                </div>
             </div>
-            <div class="plan">
-                <h3>🏢 Enterprise</h3>
-                <div class="plan-price">R$ 997<span>/mês</span></div>
-                <ul class="plan-features">
-                    <li>10 Agentes de IA</li>
-                    <li>Mensagens ilimitadas</li>
-                    <li>Suporte 24/7</li>
-                    <li>API completa</li>
-                    <li>Integrações customizadas</li>
-                    <li>Treinamento incluso</li>
-                </ul>
-                <button class="btn btn-secondary" style="width: 100%;">Quero este</button>
+            <div class="menu-item" onclick="openCalendar()">
+                <div class="menu-icon">📅</div>
+                <div class="menu-text">
+                    <div class="menu-title">Agenda</div>
+                    <div class="menu-desc">Compromissos</div>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openFinance()">
+                <div class="menu-icon">💰</div>
+                <div class="menu-text">
+                    <div class="menu-title">Finanças</div>
+                    <div class="menu-desc">Contas e gastos</div>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openContacts()">
+                <div class="menu-icon">👥</div>
+                <div class="menu-text">
+                    <div class="menu-title">Contatos</div>
+                    <div class="menu-desc">Agenda de contatos</div>
+                </div>
+            </div>
+            <div class="menu-item" onclick="openSettings()">
+                <div class="menu-icon">⚙️</div>
+                <div class="menu-text">
+                    <div class="menu-title">Configurações</div>
+                    <div class="menu-desc">Personalize</div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section class="cta" id="contato">
-        <h2>🚀 Pronto para Ganhar Mais?</h2>
-        <p>Comece hoje e veja resultados em 7 dias</p>
-        <a href="https://wa.me/5551935005569" class="btn btn-primary">Falar no WhatsApp</a>
-    </section>
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <h3>📝 Nova Tarefa</h3>
+        <input type="text" id="taskInput" placeholder="O que precisa fazer?">
+        <div class="modal-buttons">
+            <button class="modal-btn cancel" onclick="closeModal('taskModal')">Cancelar</button>
+            <button class="modal-btn confirm" onclick="addTask()">Adicionar</button>
+        </div>
+    </div>
 
-    <footer>
-        <p>© 2026 AI Agent Service - Todos os direitos reservados</p>
-    </footer>
+    <!-- Note Modal -->
+    <div class="modal" id="noteModal">
+        <h3>📒 Nova Anotação</h3>
+        <textarea id="noteInput" rows="4" placeholder="Escreva sua nota..."></textarea>
+        <div class="modal-buttons">
+            <button class="modal-btn cancel" onclick="closeModal('noteModal')">Cancelar</button>
+            <button class="modal-btn confirm" onclick="addNote()">Salvar</button>
+        </div>
+    </div>
 
-    <a href="https://wa.me/5551935005569" class="whatsapp">💬</a>
+    <script>
+        // State
+        let isRecording = false;
+        let mediaRecorder;
+        let audioChunks = [];
+        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+        
+        // Start
+        function startChat() {
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('main').style.display = 'flex';
+            addMessage('received', 'Olá! Sou sua assistente digital. Posso ajudar com:\n\n✅ Tarefas e lembretes\n📒 Anotações\n📅 Agenda\n💰 Finanças\n👥 Contatos\n\nÉ só mandar uma mensagem ou usar o menu! 😊');
+        }
+        
+        // Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
+        }
+        
+        // Messages
+        function addMessage(type, content, isAudio = false) {
+            const chat = document.getElementById('chat');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            
+            if (isAudio) {
+                div.classList.add('message-audio');
+                div.innerHTML = `
+                    <div class="audio-player">
+                        <button class="play-btn">▶</button>
+                        <div class="audio-wave"></div>
+                        <div class="audio-duration">0:30</div>
+                    </div>
+                `;
+            } else {
+                div.innerHTML = content.replace(/\n/g, '<br>');
+            }
+            
+            const time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            div.innerHTML += `<div class="message-time">${time}</div>`;
+            
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addMessage('sent', message);
+            input.value = '';
+            
+            // Show typing
+            document.getElementById('typing').style.display = 'block';
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+            
+            // Process with AI
+            setTimeout(() => {
+                document.getElementById('typing').style.display = 'none';
+                processMessage(message);
+            }, 1500);
+        }
+        
+        // Process message with AI
+        function processMessage(message) {
+            const msg = message.toLowerCase();
+            let response = '';
+            
+            // Smart responses
+            if (msg.includes('tarefa') || msg.includes('tarefa') && msg.includes('nova')) {
+                response = 'Vou abrir o formulário de tarefa!';
+                setTimeout(() => openTasks(), 1000);
+                addMessage('received', response);
+            } else if (msg.includes('anotação') || msg.includes('nota')) {
+                response = 'Vou abrir para você fazer uma anotação!';
+                setTimeout(() => openNotes(), 1000);
+                addMessage('received', response);
+            } else if (msg.includes('horas') || msg.includes('que horas')) {
+                response = `Agora são ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+                addMessage('received', response);
+            } else if (msg.includes('data') || msg.includes('que dia')) {
+                response = `Hoje é ${new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+                addMessage('received', response);
+            } else if (msg.includes('tarefa') || msg.includes('tarefas')) {
+                const pending = tasks.filter(t => !t.done).length;
+                response = `Você tem ${pending} tarefa${pending !== 1 ? 's' : ''} pendente${pending !== 1 ? 's' : ''}.`;
+                addMessage('received', response);
+            } else {
+                // AI response
+                const responses = [
+                    'Entendi! Posso ajudar com tarefas, anotações, agenda e muito mais. Use o menu ou peça ajuda! 😊',
+                    'Perfeito! Como posso ajudar? Posso criar tarefas, anotações, verificar agenda, ou qualquer outra coisa!',
+                    'Estou aqui para ajudar! Me diz o que precisa e eu faço! ✅',
+                    'Ok! Pode me pedir para criar tarefas, salvar anotações, verificar agenda, ou qualquer coisa! 😊'
+                ];
+                response = responses[Math.floor(Math.random() * responses.length)];
+                addMessage('received', response);
+            }
+            
+            // Speak response
+            speak(response);
+        }
+        
+        // Voice
+        function speak(text) {
+            // Uses browser TTS
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'pt-BR';
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Recording
+        async function startRecording() {
+            isRecording = true;
+            document.getElementById('recordBtn').classList.add('recording');
+            document.getElementById('recordBtn').textContent = '⏹';
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = (e) => {
+                    audioChunks.push(e.data);
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    addMessage('sent', '[Áudio]', true);
+                    processAudio(audioUrl);
+                };
+                
+                mediaRecorder.start();
+            } catch (e) {
+                console.log('Error:', e);
+            }
+        }
+        
+        function stopRecording() {
+            if (isRecording && mediaRecorder) {
+                isRecording = false;
+                document.getElementById('recordBtn').classList.remove('recording');
+                document.getElementById('recordBtn').textContent = '🎤';
+                mediaRecorder.stop();
+            }
+        }
+        
+        // Process audio (would use Whisper in production)
+        function processAudio(audioUrl) {
+            document.getElementById('typing').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('typing').style.display = 'none';
+                const responses = [
+                    'Entendi! Posso ajudar com isso. Pode ser mais específico?',
+                    'Ok! Vou processar seu áudio. O que precisa que eu faça?',
+                    'Recebi! Como posso ajudar?'
+                ];
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                addMessage('received', response);
+                speak(response);
+            }, 2000);
+        }
+        
+        // Tasks
+        function openTasks() {
+            toggleSidebar();
+            let taskList = tasks.map(t => `
+                <div class="task-item">
+                    <div class="task-check ${t.done ? 'checked' : ''}" onclick="toggleTask(${t.id})"></div>
+                    <div class="task-text ${t.done ? 'done' : ''}">${t.text}</div>
+                </div>
+            `).join('');
+            
+            const response = `📝 Suas tarefas:\n\n${taskList || 'Nenhuma tarefa ainda.\nDiga "nova tarefa" para criar!'}`;
+            addMessage('received', response);
+        }
+        
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            if (input.value.trim()) {
+                tasks.push({ id: Date.now(), text: input.value, done: false });
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                closeModal('taskModal');
+                input.value = '';
+                addMessage('received', '✅ Tarefa adicionada!');
+            }
+        }
+        
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.done = !task.done;
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                openTasks();
+            }
+        }
+        
+        // Notes
+        function openNotes() {
+            toggleSidebar();
+            let noteList = notes.map(n => `
+                <div class="note-card">
+                    <div>${n.text}</div>
+                    <div class="note-date">${new Date(n.date).toLocaleDateString('pt-BR')}</div>
+                </div>
+            `).join('');
+            
+            const response = `📒 Suas anotações:\n\n${noteList || 'Nenhuma anotação ainda.\nDiga "nova anotação" para criar!'}`;
+            addMessage('received', response);
+        }
+        
+        function addNote() {
+            const input = document.getElementById('noteInput');
+            if (input.value.trim()) {
+                notes.push({ id: Date.now(), text: input.value, date: new Date() });
+                localStorage.setItem('notes', JSON.stringify(notes));
+                closeModal('noteModal');
+                input.value = '';
+                addMessage('received', '✅ Anotação salva!');
+            }
+        }
+        
+        // Modals
+        function openTasksModal() {
+            document.getElementById('taskModal').classList.add('show');
+        }
+        
+        function openNotesModal() {
+            document.getElementById('noteModal').classList.add('show');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+        
+        // Placeholders
+        function openCalendar() { toggleSidebar(); addMessage('received', '📅 Funcionalidade de agenda em breve!'); }
+        function openFinance() { toggleSidebar(); addMessage('received', '💰 Controle financeiro em breve!'); }
+        function openContacts() { toggleSidebar(); addMessage('received', '👥 Lista de contatos em breve!'); }
+        function openSettings() { toggleSidebar(); addMessage('received', '⚙️ Configurações em breve!'); }
+        function makeCall() { addMessage('received', '📞 Funcionalidade de chamada em breve!'); }
+        
+        // Enter key
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        // Install
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
