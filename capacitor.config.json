@@ -1,0 +1,9 @@
+{
+  "appId": "com.aiagentservice.app",
+  "appName": "AI Agent",
+  "webDir": "android",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
