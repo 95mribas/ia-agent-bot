@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="description" content="AI Agent Service - Seus assistentes de IA">
+    <title>AI Agent</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #00ff88;
+            --bg: #0a0a1a;
+            --surface: #1a1a2e;
+            --text: #fff;
+            --text-secondary: #888;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Loading */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+        
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--surface);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Header */
+        header {
+            background: linear-gradient(90deg, var(--surface), var(--bg));
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* Chat */
+        #chat {
+            padding: 20px;
+            padding-bottom: 100px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            margin-left: auto;
+        }
+        
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: var(--primary);
+            color: #000;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.ai .message-content {
+            background: var(--surface);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        .message.user .message-time {
+            text-align: right;
+        }
+        
+        /* Audio button */
+        .audio-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,212,255,0.4);
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        
+        .audio-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .audio-btn.recording {
+            animation: pulse 1s infinite;
+            background: #ff4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Input */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        #messageInput {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 25px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 16px;
+        }
+        
+        #messageInput::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .send-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        /* Typing */
+        .typing {
+            display: flex;
+            gap: 5px;
+            padding: 15px;
+            background: var(--surface);
+            border-radius: 18px;
+            width: fit-content;
+        }
+        
+        .typing span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Menu */
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Agents list */
+        #agentsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        #agentsModal.show {
+            display: block;
+        }
+        
+        .modal-content {
+            background: var(--bg);
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 20px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .agent-card {
+            background: var(--surface);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .agent-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .agent-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .agent-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .agent-price {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        /* Install banner */
+        #installBanner {
+            display: none;
+            background: var(--surface);
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+        }
+        
+        #installBanner.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading -->
+    <div id="loading">
+        <div class="loader"></div>
+        <p style="margin-top: 20px;">Carregando...</p>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <button class="menu-btn" onclick="showAgents()">☰</button>
+        <div class="logo">🤖 AI Agent</div>
+        <div class="user-avatar" id="userAvatar">?</div>
+    </header>
+
+    <!-- Chat -->
+    <div id="chat"></div>
+    
+    <!-- Typing indicator -->
+    <div id="typing" class="message ai" style="display: none;">
+        <div class="typing">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Digite sua mensagem...">
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+
+    <!-- Audio button -->
+    <button class="audio-btn" id="audioBtn" onclick="toggleRecording()">🎤</button>
+
+    <!-- Install banner -->
+    <div id="installBanner">
+        <p>Instalar como app? <button onclick="installApp()" style="background: var(--primary); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer;">Instalar</button></p>
+    </div>
+
+    <!-- Agents Modal -->
+    <div id="agentsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🤖 Agentes Disponíveis</h2>
+                <button class="close-btn" onclick="hideAgents()">✕</button>
+            </div>
+            <div id="agentsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Config
+        const API_URL = 'https://sua-api-aqui.com'; // Configure sua API
+        
+        // State
+        let currentAgent = 'atendente';
+        let isRecording = false;
+        let deferredPrompt;
+        
+        // Agents
+        const agents = {
+            atendente: { name: 'Atendente Virtual', desc: 'Atende clientes 24/7', price: 'R$ 97/mês' },
+            vendas: { name: 'Assistente de Vendas', desc: 'Fecha vendas automático', price: 'R$ 147/mês' },
+            suporte: { name: 'Suporte Técnico', desc: 'Resolve problemas', price: 'R$ 197/mês' },
+            rh: { name: 'Assistente RH', desc: 'Gestão de pessoas', price: 'R$ 247/mês' },
+            financeiro: { name: 'Assistente Financeiro', desc: 'Finanças pessoais', price: 'R$ 297/mês' },
+            copywriter: { name: 'Copywriter IA', desc: 'Textos para vendas', price: 'R$ 197/mês' },
+            programador: { name: 'Programador', desc: 'Ajuda com código', price: 'R$ 297/mês' },
+            coach: { name: 'Coach Pessoal', desc: 'Desenvolvimento pessoal', price: 'R$ 247/mês' }
+        };
+        
+        // Init
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
+            
+            // Check user
+            const user = localStorage.getItem('aiagent_user');
+            if (user) {
+                document.getElementById('userAvatar').textContent = user.name[0].toUpperCase();
+            }
+            
+            // Welcome message
+            addMessage('ai', 'Olá! Sou seu assistente de IA. Como posso ajudar?');
+            
+            // PWA install
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installBanner').classList.add('show');
+            });
+        });
+        
+        // Send message
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addMessage('user', message);
+            input.value = '';
+            
+            // Show typing
+            document.getElementById('typing').style.display = 'block';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                document.getElementById('typing').style.display = 'none';
+                
+                const responses = {
+                    atendente: 'Entendi! Como posso ajudar você hoje? 😊',
+                    vendas: 'Ótimo! Tenho certeza que posso te ajudar. Qual produto te interessa?',
+                    suporte: 'Vou ajudar a resolver seu problema. Pode me dar mais detalhes?',
+                    rh: 'Sobre RH, posso ajudar com recrutamento, benefícios e políticas.',
+                    financeiro: 'Posso ajudar com suas finanças! Me conta mais.',
+                    copywriter: 'Vou criar um texto persuasivo para você! Qual o produto?',
+                    programador: 'Vou ajudar com seu código! Qual linguagem e problema?',
+                    coach: 'Vamos trabalhar suas metas! O que você quer alcançar?'
+                };
+                
+                const response = responses[currentAgent] || 'Entendi! Pode me contar mais?';
+                addMessage('ai', response);
+            }, 1500);
+        }
+        
+        // Add message
+        function addMessage(type, content) {
+            const chat = document.getElementById('chat');
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            
+            const time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
+            div.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${time}</div>
+            `;
+            
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        // Show agents
+        function showAgents() {
+            const list = document.getElementById('agentsList');
+            list.innerHTML = '';
+            
+            for (const [key, agent] of Object.entries(agents)) {
+                const div = document.createElement('div');
+                div.className = 'agent-card';
+                div.onclick = () => selectAgent(key);
+                div.innerHTML = `
+                    <div class="agent-name">${agent.name}</div>
+                    <div class="agent-desc">${agent.desc}</div>
+                    <div class="agent-price">${agent.price}</div>
+                `;
+                list.appendChild(div);
+            }
+            
+            document.getElementById('agentsModal').classList.add('show');
+        }
+        
+        function hideAgents() {
+            document.getElementById('agentsModal').classList.remove('show');
+        }
+        
+        function selectAgent(key) {
+            currentAgent = key;
+            hideAgents();
+            addMessage('ai', `Agente alterado para ${agents[key].name}! Como posso ajudar?`);
+        }
+        
+        // Audio recording
+        function toggleRecording() {
+            const btn = document.getElementById('audioBtn');
+            
+            if (!isRecording) {
+                // Start recording
+                isRecording = true;
+                btn.classList.add('recording');
+                btn.textContent = '⏹';
+                
+                // Simulate recording
+                setTimeout(() => {
+                    toggleRecording();
+                    addMessage('user', '[Áudio]');
+                }, 3000);
+            } else {
+                // Stop recording
+                isRecording = false;
+                btn.classList.remove('recording');
+                btn.textContent = '🎤';
+            }
+        }
+        
+        // Install app
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((result) => {
+                    if (result.outcome === 'accepted') {
+                        document.getElementById('installBanner').classList.remove('show');
+                    }
+                });
+            }
+        }
+        
+        // Enter key
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
