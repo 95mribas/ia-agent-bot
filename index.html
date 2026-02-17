@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent - Automação Inteligente</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a1a; color: #fff; }
+        
+        /* Header */
+        header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(90deg, #1a1a2e, #16213e); }
+        .logo { font-size: 28px; font-weight: bold; background: linear-gradient(90deg, #00ff88, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Hero */
+        .hero { text-align: center; padding: 100px 20px; background: radial-gradient(ellipse at top, #1a1a3e, #0a0a1a); }
+        .hero h1 { font-size: 56px; margin-bottom: 20px; }
+        .hero h1 span { background: linear-gradient(90deg, #00ff88, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 20px; color: #888; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        
+        .btn { padding: 18px 50px; border: none; border-radius: 50px; font-size: 18px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-primary { background: linear-gradient(90deg, #00ff88, #00d4ff); color: #000; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,255,136,0.4); }
+        .btn-secondary { background: transparent; border: 2px solid #00ff88; color: #00ff88; margin-left: 15px; }
+        
+        /* Features */
+        .features { padding: 80px 40px; background: #0a0a1a; }
+        .features h2 { text-align: center; font-size: 40px; margin-bottom: 50px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .feature { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; text-align: center; transition: 0.3s; }
+        .feature:hover { transform: translateY(-10px); background: rgba(0,255,136,0.1); }
+        .feature-icon { font-size: 50px; margin-bottom: 20px; }
+        .feature h3 { font-size: 22px; margin-bottom: 15px; color: #00ff88; }
+        .feature p { color: #888; }
+        
+        /* Pricing */
+        .pricing { padding: 80px 40px; background: linear-gradient(180deg, #0a0a1a, #1a1a3e); }
+        .pricing h2 { text-align: center; font-size: 40px; margin-bottom: 50px; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
+        .plan { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; text-align: center; transition: 0.3s; border: 2px solid transparent; }
+        .plan:hover { border-color: #00ff88; transform: scale(1.02); }
+        .plan.popular { border-color: #00ff88; position: relative; }
+        .plan.popular::before { content: 'MAIS VENDIDO'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #00ff88; color: #000; padding: 5px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .plan-price { font-size: 48px; font-weight: bold; color: #00ff88; margin: 20px 0; }
+        .plan-price span { font-size: 18px; color: #888; }
+        .plan-features { list-style: none; margin: 20px 0; text-align: left; }
+        .plan-features li { padding: 10px 0; color: #ccc; }
+        .plan-features li::before { content: '✓ '; color: #00ff88; }
+        
+        /* CTA */
+        .cta { padding: 100px 20px; text-align: center; background: radial-gradient(ellipse at bottom, #1a1a3e, #0a0a1a); }
+        .cta h2 { font-size: 40px; margin-bottom: 20px; }
+        .cta p { color: #888; margin-bottom: 40px; }
+        
+        /* Footer */
+        footer { padding: 40px; text-align: center; color: #666; background: #050510; }
+        
+        /* WhatsApp */
+        .whatsapp { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; text-decoration: none; box-shadow: 0 5px 20px rgba(37,211,102,0.4); }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 32px; }
+            .btn { width: 100%; margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">🤖 AI Agent</div>
+        <a href="#contato" class="btn btn-primary" style="padding: 10px 25px; font-size: 14px;">Falar no WhatsApp</a>
+    </header>
+
+    <section class="hero">
+        <h1>Automatize Tudo com<br><span>Inteligência Artificial</span></h1>
+        <p>Agentes de IA que trabalham 24/7 para sua empresa. Atendem clientes, vendem, analisam dados e muito mais.</p>
+        <button class="btn btn-primary" onclick="window.location.href='#pricing'">Começar Agora</button>
+        <button class="btn btn-secondary" onclick="window.location.href='#features'">Ver Features</button>
+    </section>
+
+    <section class="features" id="features">
+        <h2>🤖 O que os Agentes fazem</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">🎧</div>
+                <h3>Atendimento 24/7</h3>
+                <p>Agente que responde instantaneamente, qualquer hora do dia ou da noite</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h3>Vendas</h3>
+                <p>Auxilia clientes, mostra produtos e fecha vendas automaticamente</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <h3>Análise de Dados</h3>
+                <p>Analisa informações e gera relatórios insights Actionáveis</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔧</div>
+                <h3>Suporte Técnico</h3>
+                <p>Resolve problemas técnicos sem precisar de humano</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📅</div>
+                <h3>Agendamento</h3>
+                <p>Marca consultas, reuniões e compromissos automaticamente</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💬</div>
+                <h3>Multi-channel</h3>
+                <p>WhatsApp, Telegram, Instagram, Website - tudo integrado</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <h2>💵 Planos para Todos os Bolos</h2>
+        <div class="pricing-grid">
+            <div class="plan">
+                <h3>🚗 Básico</h3>
+                <div class="plan-price">R$ 97<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>1 Agente de IA</li>
+                    <li>100 mensagens/dia</li>
+                    <li>Suporte por email</li>
+                    <li>Atendimento básico</li>
+                </ul>
+                <button class="btn btn-secondary" style="width: 100%;">Quero este</button>
+            </div>
+            <div class="plan popular">
+                <h3>🚀 Pro</h3>
+                <div class="plan-price">R$ 297<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>3 Agentes de IA</li>
+                    <li>1.000 mensagens/dia</li>
+                    <li>Suporte priority</li>
+                    <li>API de integração</li>
+                    <li>Todas as funcionalidades</li>
+                </ul>
+                <button class="btn btn-primary" style="width: 100%;">Quero este</button>
+            </div>
+            <div class="plan">
+                <h3>🏢 Enterprise</h3>
+                <div class="plan-price">R$ 997<span>/mês</span></div>
+                <ul class="plan-features">
+                    <li>10 Agentes de IA</li>
+                    <li>Mensagens ilimitadas</li>
+                    <li>Suporte 24/7</li>
+                    <li>API completa</li>
+                    <li>Integrações customizadas</li>
+                    <li>Treinamento incluso</li>
+                </ul>
+                <button class="btn btn-secondary" style="width: 100%;">Quero este</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta" id="contato">
+        <h2>🚀 Pronto para Ganhar Mais?</h2>
+        <p>Comece hoje e veja resultados em 7 dias</p>
+        <a href="https://wa.me/5551935005569" class="btn btn-primary">Falar no WhatsApp</a>
+    </section>
+
+    <footer>
+        <p>© 2026 AI Agent Service - Todos os direitos reservados</p>
+    </footer>
+
+    <a href="https://wa.me/5551935005569" class="whatsapp">💬</a>
+</body>
+</html>
